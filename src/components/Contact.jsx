@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { saveContactForm } from '../firebaseUtils'
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -11,31 +12,50 @@ export default function Contact() {
     preferredContact: 'phone',
     urgent: false
   })
+  
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState(null)
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log('Contact form submitted:', formData)
+    setIsSubmitting(true)
+    setSubmitStatus(null)
     
-    // Kid-friendly success message
-    const parentName = formData.parentName.split(' ')[0] || 'Parent'
-    alert(`🎉 Thanks ${parentName}! Your message is on its way!
-    
-We'll get back to you within:
-📱 30 mins for urgent matters
-📧 24 hours for general inquiries
-
-Your little one's health is our priority! 👶💕`)
-    
-    setFormData({
-      parentName: '',
-      childName: '',
-      email: '',
-      phone: '',
-      subject: '',
-      message: '',
-      preferredContact: 'phone',
-      urgent: false
-    })
+    try {
+      // Save to Firebase
+      const result = await saveContactForm(formData)
+      
+      if (result.success) {
+        setSubmitStatus({
+          type: 'success',
+          message: `🎉 Thanks ${formData.parentName.split(' ')[0] || 'Parent'}! Your message is on its way! We'll respond within 24 hours.`
+        })
+        
+        // Clear form
+        setFormData({
+          parentName: '',
+          childName: '',
+          email: '',
+          phone: '',
+          subject: '',
+          message: '',
+          preferredContact: 'phone',
+          urgent: false
+        })
+      } else {
+        setSubmitStatus({
+          type: 'error',
+          message: 'Sorry, something went wrong. Please try again or call us directly.'
+        })
+      }
+    } catch (error) {
+      setSubmitStatus({
+        type: 'error',
+        message: 'Network error. Please check your connection.'
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -92,7 +112,7 @@ Your little one's health is our priority! 👶💕`)
                       <span className="mr-2">🚨</span>
                       Kids' Emergency Line
                     </h4>
-                    <p className="text-3xl font-bold text-red-600 mb-1">0802-718-3558</p>
+                    <p className="text-3xl font-bold text-red-600 mb-1">08036596328</p>
                     <p className="text-sm text-gray-600 flex items-center">
                       <span className="text-lg mr-1">⚡</span>
                       Available 24/7 for urgent kids' care
@@ -113,7 +133,7 @@ Your little one's health is our priority! 👶💕`)
                       <span className="mr-2">📱</span>
                       Parent WhatsApp Support
                     </h4>
-                    <p className="text-2xl font-bold text-green-600 mb-1">+234 802 718 3558</p>
+                    <p className="text-2xl font-bold text-green-600 mb-1">+234 803 6596 328</p>
                     <p className="text-sm text-gray-600 flex items-center">
                       <span className="text-lg mr-1">👶</span>
                       Quick answers for non-emergencies
@@ -159,8 +179,8 @@ Your little one's health is our priority! 👶💕`)
                           <span className="font-semibold">Main Children's Hospital</span>
                         </div>
                         <p className="text-gray-600 text-sm leading-relaxed ml-8">
-                          Plot 782/783, Talludu Rayne<br />
-                          Aminu Kano Way, Kano<br />
+                          No 114A Hassan Suleiman Street,<br />
+                          Hausawa, Kano 700101, Kano<br />
                           🕒 Open 24/7 for kids' emergencies
                         </p>
                       </div>
@@ -171,9 +191,7 @@ Your little one's health is our priority! 👶💕`)
                           <span className="font-semibold">Kids' Clinic & Maternity</span>
                         </div>
                         <p className="text-gray-600 text-sm leading-relaxed ml-8">
-                          Sabuwar, Gandu Road, Tukuntawa<br />
-                          Kano, Nigeria<br />
-                          🕒 Mon-Sat: 8am - 8pm
+                          Coming Soon - Opening 2025
                         </p>
                       </div>
                     </div>
@@ -219,6 +237,22 @@ Your little one's health is our priority! 👶💕`)
                 <span className="text-3xl mr-3">✉️</span>
                 Send Us a Message
               </h3>
+              
+              {/* Status Message */}
+              {submitStatus && (
+                <div className={`mb-6 p-4 rounded-xl ${
+                  submitStatus.type === 'success' 
+                    ? 'bg-green-100 text-green-800 border-2 border-green-300' 
+                    : 'bg-red-100 text-red-800 border-2 border-red-300'
+                }`}>
+                  <div className="flex items-center">
+                    <span className="text-2xl mr-3">
+                      {submitStatus.type === 'success' ? '✅' : '⚠️'}
+                    </span>
+                    <p>{submitStatus.message}</p>
+                  </div>
+                </div>
+              )}
               
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
@@ -276,7 +310,7 @@ Your little one's health is our priority! 👶💕`)
                     <input
                       type="tel"
                       required
-                      placeholder="0802 718 3558"
+                      placeholder="0803 659 6328"
                       className="w-full p-4 border-2 border-pink-200 rounded-xl focus:border-green-400"
                       value={formData.phone}
                       onChange={(e) => setFormData({...formData, phone: e.target.value})}
@@ -383,11 +417,23 @@ Your little one's health is our priority! 👶💕`)
 
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-blue-400 to-green-400 text-white py-5 rounded-2xl font-bold text-xl hover:shadow-2xl transition-all hover:scale-105 flex items-center justify-center"
+                  disabled={isSubmitting}
+                  className={`w-full bg-gradient-to-r from-blue-400 to-green-400 text-white py-5 rounded-2xl font-bold text-xl hover:shadow-2xl transition-all hover:scale-105 flex items-center justify-center ${
+                    isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
                 >
-                  <span className="text-2xl mr-3">✉️</span>
-                  Send Message
-                  <span className="text-2xl ml-3">✨</span>
+                  {isSubmitting ? (
+                    <>
+                      <span className="animate-spin text-2xl mr-3">⏳</span>
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-2xl mr-3">✉️</span>
+                      Send Message
+                      <span className="text-2xl ml-3">✨</span>
+                    </>
+                  )}
                 </button>
 
                 <p className="text-center text-sm text-gray-500">
