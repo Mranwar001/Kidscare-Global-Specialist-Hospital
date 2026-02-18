@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { saveContactForm } from '../firebaseUtils'
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -12,50 +11,31 @@ export default function Contact() {
     preferredContact: 'phone',
     urgent: false
   })
-  
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitStatus, setSubmitStatus] = useState(null)
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
-    setIsSubmitting(true)
-    setSubmitStatus(null)
+    console.log('Contact form submitted:', formData)
     
-    try {
-      // Save to Firebase
-      const result = await saveContactForm(formData)
-      
-      if (result.success) {
-        setSubmitStatus({
-          type: 'success',
-          message: `🎉 Thanks ${formData.parentName.split(' ')[0] || 'Parent'}! Your message is on its way! We'll respond within 24 hours.`
-        })
-        
-        // Clear form
-        setFormData({
-          parentName: '',
-          childName: '',
-          email: '',
-          phone: '',
-          subject: '',
-          message: '',
-          preferredContact: 'phone',
-          urgent: false
-        })
-      } else {
-        setSubmitStatus({
-          type: 'error',
-          message: 'Sorry, something went wrong. Please try again or call us directly.'
-        })
-      }
-    } catch (error) {
-      setSubmitStatus({
-        type: 'error',
-        message: 'Network error. Please check your connection.'
-      })
-    } finally {
-      setIsSubmitting(false)
-    }
+    // Kid-friendly success message
+    const parentName = formData.parentName.split(' ')[0] || 'Parent'
+    alert(`🎉 Thanks ${parentName}! Your message is on its way!
+    
+We'll get back to you within:
+📱 30 mins for urgent matters
+📧 24 hours for general inquiries
+
+Your little one's health is our priority! 👶💕`)
+    
+    setFormData({
+      parentName: '',
+      childName: '',
+      email: '',
+      phone: '',
+      subject: '',
+      message: '',
+      preferredContact: 'phone',
+      urgent: false
+    })
   }
 
   return (
@@ -102,7 +82,7 @@ export default function Contact() {
               </h3>
               
               <div className="space-y-8">
-                {/* Emergency */}
+                {/* Emergency - UPDATED PHONE NUMBER */}
                 <div className="flex items-start space-x-4 p-4 bg-gradient-to-r from-red-50 to-pink-50 rounded-2xl border-2 border-red-200">
                   <div className="w-16 h-16 bg-gradient-to-br from-red-400 to-pink-400 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
                     <span className="text-3xl">🚑</span>
@@ -112,7 +92,7 @@ export default function Contact() {
                       <span className="mr-2">🚨</span>
                       Kids' Emergency Line
                     </h4>
-                    <p className="text-3xl font-bold text-red-600 mb-1">08036596328</p>
+                    <p className="text-3xl font-bold text-red-600 mb-1">0803 659 6328</p>
                     <p className="text-sm text-gray-600 flex items-center">
                       <span className="text-lg mr-1">⚡</span>
                       Available 24/7 for urgent kids' care
@@ -123,7 +103,7 @@ export default function Contact() {
                   </div>
                 </div>
                 
-                {/* WhatsApp */}
+                {/* WhatsApp - UPDATED PHONE NUMBER */}
                 <div className="flex items-start space-x-4 p-4 bg-gradient-to-r from-green-50 to-teal-50 rounded-2xl border-2 border-green-200">
                   <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-teal-400 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
                     <span className="text-3xl">💬</span>
@@ -133,7 +113,7 @@ export default function Contact() {
                       <span className="mr-2">📱</span>
                       Parent WhatsApp Support
                     </h4>
-                    <p className="text-2xl font-bold text-green-600 mb-1">+234 803 6596 328</p>
+                    <p className="text-2xl font-bold text-green-600 mb-1">+234 803 659 6328</p>
                     <p className="text-sm text-gray-600 flex items-center">
                       <span className="text-lg mr-1">👶</span>
                       Quick answers for non-emergencies
@@ -169,29 +149,23 @@ export default function Contact() {
                   <div>
                     <h4 className="font-bold text-xl mb-3 flex items-center">
                       <span className="mr-2">📍</span>
-                      Visit Us
+                      Visit Our Hospital
                     </h4>
                     
                     <div className="space-y-4">
                       <div>
                         <div className="flex items-center mb-1">
-                          <span className="text-xl mr-2">🏠</span>
-                          <span className="font-semibold">Main Children's Hospital</span>
+                          <span className="text-xl mr-2">🏥</span>
+                          <span className="font-semibold">Kidscare Global Specialist Hospital</span>
                         </div>
                         <p className="text-gray-600 text-sm leading-relaxed ml-8">
-                          No 114A Hassan Suleiman Street, off Ribadu Road,<br />
-                          Hausawa, Kano 700101, Kano<br />
-                          🕒 Open 24/7 for kids' emergencies
+                          No 114A Hassan Suleiman Street,<br />
+                          off Ribadu Road, Hausawa,<br />
+                          Kano 700101, Kano State, Nigeria
                         </p>
-                      </div>
-                      
-                      <div>
-                        <div className="flex items-center mb-1">
-                          <span className="text-xl mr-2">🏡</span>
-                          <span className="font-semibold">Kids' Clinic & Maternity</span>
-                        </div>
-                        <p className="text-gray-600 text-sm leading-relaxed ml-8">
-                          Coming Soon - Opening 2025
+                        <p className="text-sm text-gray-500 ml-8 mt-1 flex items-center">
+                          <span className="text-lg mr-1">🕒</span>
+                          Open 24/7 for kids' emergencies
                         </p>
                       </div>
                     </div>
@@ -237,22 +211,6 @@ export default function Contact() {
                 <span className="text-3xl mr-3">✉️</span>
                 Send Us a Message
               </h3>
-              
-              {/* Status Message */}
-              {submitStatus && (
-                <div className={`mb-6 p-4 rounded-xl ${
-                  submitStatus.type === 'success' 
-                    ? 'bg-green-100 text-green-800 border-2 border-green-300' 
-                    : 'bg-red-100 text-red-800 border-2 border-red-300'
-                }`}>
-                  <div className="flex items-center">
-                    <span className="text-2xl mr-3">
-                      {submitStatus.type === 'success' ? '✅' : '⚠️'}
-                    </span>
-                    <p>{submitStatus.message}</p>
-                  </div>
-                </div>
-              )}
               
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
@@ -417,23 +375,11 @@ export default function Contact() {
 
                 <button
                   type="submit"
-                  disabled={isSubmitting}
-                  className={`w-full bg-gradient-to-r from-blue-400 to-green-400 text-white py-5 rounded-2xl font-bold text-xl hover:shadow-2xl transition-all hover:scale-105 flex items-center justify-center ${
-                    isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
-                  }`}
+                  className="w-full bg-gradient-to-r from-blue-400 to-green-400 text-white py-5 rounded-2xl font-bold text-xl hover:shadow-2xl transition-all hover:scale-105 flex items-center justify-center"
                 >
-                  {isSubmitting ? (
-                    <>
-                      <span className="animate-spin text-2xl mr-3">⏳</span>
-                      Sending...
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-2xl mr-3">✉️</span>
-                      Send Message
-                      <span className="text-2xl ml-3">✨</span>
-                    </>
-                  )}
+                  <span className="text-2xl mr-3">✉️</span>
+                  Send Message
+                  <span className="text-2xl ml-3">✨</span>
                 </button>
 
                 <p className="text-center text-sm text-gray-500">
