@@ -161,7 +161,7 @@ export default function Contact() {
                   </div>
                 </div>
                 
-                {/* Locations */}
+                {/* Locations - UPDATED ADDRESS */}
                 <div className="flex items-start space-x-4 p-4 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-2xl border-2 border-orange-200">
                   <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-yellow-400 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
                     <span className="text-3xl">🏥</span>
@@ -179,7 +179,7 @@ export default function Contact() {
                           <span className="font-semibold">Main Children's Hospital</span>
                         </div>
                         <p className="text-gray-600 text-sm leading-relaxed ml-8">
-                          No 114A Hassan Suleiman Street,<br />
+                          No 114A Hassan Suleiman Street, off Ribadu Road,<br />
                           Hausawa, Kano 700101, Kano<br />
                           🕒 Open 24/7 for kids' emergencies
                         </p>
